@@ -33,3 +33,4 @@ yarn-error.log*
 # Local archives
 *.zip
 *.tar.gz
+.env
