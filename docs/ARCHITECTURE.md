@@ -12,20 +12,14 @@ Definir a arquitetura final do projeto JoFogo para garantir uma base consistente
 - Playwright
 
 ## Estrutura de pastas final
-- `app/(public)` - rotas públicas do catálogo, age gate e páginas visíveis após aceite 18+
-- `app/(admin)` - painel administrativo protegido por autenticação
-- `app/api` - endpoints de backend e APIs serverless
-- `components/catalog` - componentes de listagem e filtros do catálogo
-- `components/product` - componentes de página de produto e detalhes
-- `components/order` - mini-pedido e fluxo de intenção de compra
-- `components/admin` - painel e formulários administrativos
-- `components/layout` - componentes de layout compartilhados
-- `lib/services` - regras de negócio e orquestração do domínio
-- `lib/validators` - validações de entrada e dados
-- `lib/formatters` - formatação de valores, textos e exibições
-- `lib/analytics` - registro e padronização de eventos analíticos
-- `prisma` - schema e migrações para PostgreSQL
-- `docs` - documentação do projeto
+- `app/` - rotas públicas e páginas principais
+- `app/admin/` - painel administrativo protegido por autenticação
+- `app/admin/signin/` - página pública de login admin
+- `app/api/` - endpoints de backend e APIs serverless
+- `components/` - componentes de interface reutilizáveis
+- `lib/` - código de apoio, validações, formatação e serviços
+- `prisma/` - schema e migrações para PostgreSQL
+- `docs/` - documentação do projeto
 
 ## Visão geral
 JoFogo V1 é um catálogo discreto, mobile-first, com confirmação 18+ antes da exposição do catálogo.
@@ -35,9 +29,16 @@ JoFogo V1 é um catálogo discreto, mobile-first, com confirmação 18+ antes da
 - O painel admin é separado e protegido por middleware.
 
 ## Admin e segurança
-- O painel `/admin` e todas as rotas de `/api/admin` devem ser protegidos pelo middleware.
-- A autenticação admin usa sessão persistida em cookie `admin_session` HttpOnly.
-- `/admin/signin` permanece acessível publicamente para permitir login.
+- O painel `/admin` e todas as rotas de `/api/admin` são protegidos pelo middleware.
+- `/admin/signin` permanece acessível publicamente para permitir acesso ao formulário.
+- `/admin` sem cookie `admin_session` redireciona para `/admin/signin`.
+- `/api/admin` sem cookie `admin_session` retorna JSON 401:
+  - `{ "error": "Unauthorized" }`
+
+## Lib/prisma
+- `lib/prisma.ts` exporta um singleton `prisma` compatível com hot reload do Next.js.
+- Em desenvolvimento, Prisma loga `query`, `warn` e `error`.
+- Em produção, Prisma loga `warn` e `error`.
 
 ## Regras chave
 - Produtos não devem ser buscados ou renderizados antes do aceite 18+.

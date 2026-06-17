@@ -1,13 +1,29 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+const PUBLIC_PATHS = ['/', '/api/health', '/admin/signin'];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isAdminSignin = pathname === '/admin/signin';
   const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/');
   const isAdminApiPath = pathname === '/api/admin' || pathname.startsWith('/api/admin/');
+  const isPublicPath = PUBLIC_PATHS.includes(pathname);
 
-  if (isAdminApiPath || (isAdminPath && !isAdminSignin)) {
+  if (isPublicPath) {
+    return NextResponse.next();
+  }
+
+  if (isAdminApiPath) {
+    const session = request.cookies.get('admin_session')?.value;
+
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    return NextResponse.next();
+  }
+
+  if (isAdminPath) {
     const session = request.cookies.get('admin_session')?.value;
 
     if (!session) {
