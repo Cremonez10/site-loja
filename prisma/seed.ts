@@ -1,6 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
+if (process.env.NODE_ENV === 'production') {
+  throw new Error('Seed de desenvolvimento não pode ser executado em production.')
+}
+
 const prisma = new PrismaClient()
 
 async function main() {
@@ -36,7 +40,7 @@ async function main() {
       },
       {
         name: 'Anestésicos',
-        slug: 'anesesicos',
+        slug: 'anestesicos',
         description: 'Produtos suaves para conforto localizado e uso controlado.'
       },
       {
@@ -132,7 +136,7 @@ async function main() {
         internal: false,
         noindex: false,
         brandSlug: 'sensuale-dev',
-        categorySlugs: ['anesesicos'],
+        categorySlugs: ['anestesicos'],
         imageText: 'Produto+2',
         attributes: [{ name: 'Volume', value: '50 ml' }]
       },
