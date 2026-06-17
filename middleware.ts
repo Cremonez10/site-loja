@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const ADMIN_PATHS = ['/admin', '/api/admin'];
-
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const { pathname } = request.nextUrl;
+  const isAdminSignin = pathname === '/admin/signin';
+  const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/');
+  const isAdminApiPath = pathname === '/api/admin' || pathname.startsWith('/api/admin/');
 
-  if (ADMIN_PATHS.some((path) => pathname.startsWith(path))) {
-    // Placeholder: future auth check for admin session cookie HttpOnly
-    const authorized = false;
+  if (isAdminApiPath || (isAdminPath && !isAdminSignin)) {
+    const session = request.cookies.get('admin_session')?.value;
 
-    if (!authorized) {
-      return NextResponse.redirect(new URL('/admin/signin', request.url));
+    if (!session) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = '/admin/signin';
+      return NextResponse.redirect(redirectUrl);
     }
   }
 

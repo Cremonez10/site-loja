@@ -15,9 +15,9 @@
 - Prioridade: P0
 - Esforço: 5
 - Dependência: age gate aceito
-- Dado: que existem produtos com status `ACTIVE`
+- Dado: que existem produtos com status `ACTIVE` e `OUT_OF_STOCK`
 - Quando: o usuário acessa o catálogo após o aceite 18+
-- Então: apenas produtos com status `ACTIVE` ou `OUT_OF_STOCK` são exibidos
+- Então: apenas produtos `ACTIVE` ou `OUT_OF_STOCK` são exibidos
 - Fora do escopo: exibir produtos `INACTIVE`
 
 ### 3. Produto esgotado aparece sem permitir adicionar
@@ -42,9 +42,9 @@
 - Prioridade: P0
 - Esforço: 4
 - Dependência: catálogo e produto ativo
-- Dado: que há produtos ativos e esgotados
+- Dado: que há produtos `ACTIVE`, `OUT_OF_STOCK` e `INACTIVE`
 - Quando: o usuário pesquisa por um termo válido
-- Então: a busca retorna apenas produtos permitidos e ocultas `INACTIVE`
+- Então: a busca retorna apenas produtos permitidos e oculta produtos `INACTIVE`
 - Fora do escopo: realizar busca com conteúdo explícito antes do aceite
 
 ### 6. PDP mostra produto ativo
@@ -98,7 +98,7 @@
 - Dependência: admin autenticado
 - Dado: que o admin está no painel
 - Quando: ele cria ou edita um produto
-- Então: o produto é salvo com sku, slug únicos, categorias e imagens
+- Então: o produto é salvo com `sku`, `slug` únicos, categorias e imagens
 - Fora do escopo: publicar em marketplace ou lista pública sem controle
 
 ### 12. Admin altera status do produto
@@ -114,3 +114,4 @@
 - Todas as histórias críticas devem ter fluxo claro e testes Playwright planejados.
 - O site deve manter linguagem discreta e foco mobile-first.
 - Nenhum item de checkout, marketplace, login de cliente ou IA deve ser implementado.
+- Não implementar telas completas do catálogo ainda.

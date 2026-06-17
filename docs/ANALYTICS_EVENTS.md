@@ -1,7 +1,7 @@
 # JoFogo V1 - Eventos Analíticos
 
 ## Objetivo
-Registrar eventos de uso que ajudem a entender a navegação, engajamento e fluxo de mini-pedido sem capturar dados pessoais sensíveis.
+Registrar eventos padronizados que capturem navegação, engajamento e fluxo de mini-pedido sem coletar dados pessoais sensíveis.
 
 ## Eventos padronizados
 
@@ -80,7 +80,7 @@ Registrar eventos de uso que ajudem a entender a navegação, engajamento e flux
 - O evento `admin_login_success` deve ser usado apenas para auditoria do painel.
 
 ## Critérios de análise
-- Monitorar o fluxo do age gate e o aceitação/rejeição.
+- Monitorar o fluxo do age gate e a aceitação/rejeição.
 - Avaliar conversão de `order_intent_started` para `order_intent_sent`.
 - Medir uso do fallback `whatsapp_message_copied`.
 - Acompanhar eventos admin de criação, atualização e mudança de status.

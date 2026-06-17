@@ -1,77 +1,59 @@
 # JoFogo V1 - Arquitetura
 
 ## Objetivo
-Documentar a arquitetura final da aplicação JoFogo para garantir clareza sobre componentes, responsabilidades e decisões técnicas.
+Definir a arquitetura final do projeto JoFogo para garantir uma base consistente, discreta e focada na V1 do catálogo adulto.
 
-## Visão geral da arquitetura
-JoFogo V1 usa uma stack web moderna focada em catálogo adulto discreto, mobile-first e seguro.
-- Framework: Next.js App Router
-- Linguagem: TypeScript com strict mode
-- UI: Tailwind CSS
-- Banco de dados: PostgreSQL
-- ORM: Prisma
-- Testes: Playwright
-- Auth admin: sessão segura com cookie HttpOnly
-- Estado do mini-pedido: localStorage
+## Stack final
+- Next.js App Router
+- TypeScript com `strict` habilitado
+- Tailwind CSS
+- PostgreSQL
+- Prisma
+- Playwright
 
-## Estrutura de pastas
-- `app/(public)` - rotas públicas do catálogo e páginas de cliente
-- `app/(admin)` - painel administrativo protegido
-- `app/api` - APIs serverless e endpoints de backend
-- `components` - componentes React reutilizáveis
-- `lib/services` - regras de negócio e orquestração
+## Estrutura de pastas final
+- `app/(public)` - rotas públicas do catálogo, age gate e páginas visíveis após aceite 18+
+- `app/(admin)` - painel administrativo protegido por autenticação
+- `app/api` - endpoints de backend e APIs serverless
+- `components/catalog` - componentes de listagem e filtros do catálogo
+- `components/product` - componentes de página de produto e detalhes
+- `components/order` - mini-pedido e fluxo de intenção de compra
+- `components/admin` - painel e formulários administrativos
+- `components/layout` - componentes de layout compartilhados
+- `lib/services` - regras de negócio e orquestração do domínio
 - `lib/validators` - validações de entrada e dados
-- `lib/formatters` - formatação de valores e texto
-- `lib/analytics` - registro de eventos analíticos
-- `prisma` - schema e migrações do banco de dados
+- `lib/formatters` - formatação de valores, textos e exibições
+- `lib/analytics` - registro e padronização de eventos analíticos
+- `prisma` - schema e migrações para PostgreSQL
 - `docs` - documentação do projeto
 
-## Componentes principais
+## Visão geral
+JoFogo V1 é um catálogo discreto, mobile-first, com confirmação 18+ antes da exposição do catálogo.
+- O age gate bloqueia busca e renderização de produtos até o aceite.
+- O mini-pedido representa apenas intenção de compra, sem checkout ou pagamento.
+- O WhatsApp tem fallback obrigatório para copiar a mensagem se o app não puder ser aberto.
+- O painel admin é separado e protegido por middleware.
 
-### Frontend
-- Gate 18+ para bloquear acesso ao catálogo até o aceite.
-- Catálogo responsivo com filtros e busca.
-- Página de detalhe do produto (PDP) com informações discretas.
-- Mini-pedido em localStorage representando intenção de compra.
-- Integração WhatsApp com fallback de cópia de mensagem.
-- Painel admin separado para gestão de produtos e categorias.
+## Admin e segurança
+- O painel `/admin` e todas as rotas de `/api/admin` devem ser protegidos pelo middleware.
+- A autenticação admin usa sessão persistida em cookie `admin_session` HttpOnly.
+- `/admin/signin` permanece acessível publicamente para permitir login.
 
-### API / Backend
-- Endpoints em `app/api` para produtos, categorias, admin e analytics.
-- Lógica de visibilidade de produto por status (`ACTIVE`, `OUT_OF_STOCK`, `INACTIVE`).
-- Autenticação admin por sessão com cookie HttpOnly.
-- Prisma como camada ORM para PostgreSQL.
-
-### Persistência
-- Tabelas: `Product`, `Category`, `Brand`, `ProductImage`, `ProductAttribute`, `ProductCategory`, `OrderDraft`, `OrderItem`, `AnalyticsEvent`, `AdminUser`.
-- Relação muitos-para-muitos entre produtos e categorias.
-- Estado do mini-pedido mantido localmente no navegador.
-
-## Regras de visibilidade
-- Produtos e catálogo não devem ser buscados ou renderizados antes do aceite 18+.
-- O age gate deve bloquear qualquer requisição de produto pública até que o visitante aceite.
-- Produtos internos devem ser marcados `noindex` na renderização e nos metadados.
-
-## Segurança do admin
-- Rotas admin protegidas por middleware de autenticação.
-- O middleware valida sessão e cookie HttpOnly antes de renderizar páginas ou APIs admin.
-- O painel admin não deve ser acessível sem login.
+## Regras chave
+- Produtos não devem ser buscados ou renderizados antes do aceite 18+.
+- Produtos com status `ACTIVE` ou `OUT_OF_STOCK` podem aparecer no catálogo público.
+- Produtos `INACTIVE` não devem ser exibidos para visitantes.
+- Produtos internos devem ser marcados `noindex` em metadados.
 
 ## Decisões de arquitetura
-- Fixar stack em Next.js App Router e TypeScript strict.
-- Usar Tailwind CSS para interface consistente e responsiva.
 - Separar regras de negócio de apresentação em `lib/services`.
-- Colocar validações em `lib/validators` e formatações em `lib/formatters`.
-- Colocar analytics em `lib/analytics` para rastrear ações relevantes.
+- Separar validações em `lib/validators`.
+- Separar formatações em `lib/formatters`.
+- Separar analytics em `lib/analytics`.
 - Evitar lógica complexa dentro de componentes React.
+- Tratar erros em fluxos críticos e registrar eventos analíticos relevantes.
 
-## Riscos técnicos
-- O WhatsApp depende do ambiente do usuário; fallback de cópia é obrigatório.
-- Estado em localStorage exige sincronização correta com o fluxo de mini-pedido.
-- Autenticação do admin em sessão deve proteger rotas e APIs.
-- O age gate deve impedir exposição de produtos antes de aceitação.
-
-## Observações de implantação
-- Validar routes e middleware de admin.
-- Aplicar `noindex` em produtos internos via metadados e header.
-- Garantir que todas as ações críticas capturem eventos analíticos.
+## Observações
+- Não implementar marketplace, login de cliente ou IA na V1.
+- A arquitetura é limitada ao catálogo adulto, mini-pedido de intenção e painel admin.
+- Documentação e código devem refletir este escopo.

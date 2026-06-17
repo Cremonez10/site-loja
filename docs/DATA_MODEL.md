@@ -1,4 +1,4 @@
-# JoFogo V1 - Modelo de Dados Inicial
+# JoFogo V1 - Modelo de Dados
 
 ## Entidades principais
 
@@ -56,6 +56,15 @@
 - `createdAt`: datetime
 - `updatedAt`: datetime
 
+### AnalyticsEvent
+- `id`: UUID
+- `name`: string
+- `timestamp`: datetime
+- `productId`: UUID opcional
+- `categoryId`: UUID opcional
+- `adminId`: UUID opcional
+- `metadata`: JSON
+
 ### OrderDraft
 - `id`: UUID
 - `createdAt`: datetime
@@ -73,15 +82,6 @@
 - `priceSnapshot`: Decimal
 - `createdAt`: datetime
 - `updatedAt`: datetime
-
-### AnalyticsEvent
-- `id`: UUID
-- `name`: string
-- `timestamp`: datetime
-- `productId`: UUID opcional
-- `categoryId`: UUID opcional
-- `adminId`: UUID opcional
-- `metadata`: JSON
 
 ### AdminUser
 - `id`: UUID
@@ -105,11 +105,10 @@
 ## Observações de modelo
 - `Product.sku` e `Product.slug` são únicos.
 - `Product.price` deve usar tipo Decimal para evitar imprecisão em valores monetários.
-- `Product` pode ter múltiplas categorias e várias imagens.
-- Atributos dinâmicos de produto são permitidos via `ProductAttribute`.
+- `OrderItem.priceSnapshot` deve usar tipo Decimal.
 - `OrderDraft` representa intenção de compra, não um pedido pago.
-- `OrderItem.priceSnapshot` mantém o preço no momento da intenção.
 - Não criar entidades `Customer`, `Payment` ou `Checkout` na V1.
+- Não criar um modelo `MiniOrder`; usar `OrderDraft` e `OrderItem`.
 
 ## Regras de negócio aplicadas ao modelo
 - Produtos com `status = ACTIVE` aparecem no catálogo e na busca.
