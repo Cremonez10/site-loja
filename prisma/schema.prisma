@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  ACTIVE
+  OUT_OF_STOCK
+  INACTIVE
+}
+
+enum OrderDraftStatus {
+  INTENT_CREATED
+  SENT_TO_WHATSAPP
+  COPIED_TO_CLIPBOARD
+}
+
+model Product {
+  id         String   @id @default(uuid())
+  sku        String   @unique
+  slug       String   @unique
+  name       String
+  description String
+  price      Decimal
+  status     ProductStatus
+  internal   Boolean   @default(false)
+  noindex    Boolean   @default(false)
+  brand      Brand?     @relation(fields: [brandId], references: [id])
+  brandId    String?
+  categories ProductCategory[]
+  images     ProductImage[]
+  attributes ProductAttribute[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Category {
+  id          String            @id @default(uuid())
+  name        String
+  slug        String
+  description String
+  products    ProductCategory[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model ProductCategory {
+  id         String   @id @default(uuid())
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+  createdAt  DateTime @default(now())
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  url       String
+  altText   String
+  position  Int
+  createdAt DateTime @default(now())
+}
+
+model ProductAttribute {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  name      String
+  value     String
+  createdAt DateTime @default(now())
+}
+
+model Brand {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model OrderDraft {
+  id        String      @id @default(uuid())
+  status    OrderDraftStatus
+  items     OrderItem[]
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id           String      @id @default(uuid())
+  orderDraft   OrderDraft  @relation(fields: [orderDraftId], references: [id])
+  orderDraftId String
+  product      Product     @relation(fields: [productId], references: [id])
+  productId    String
+  productName  String
+  quantity     Int
+  priceSnapshot Decimal
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(uuid())
+  name       String
+  timestamp  DateTime @default(now())
+  productId  String?
+  categoryId String?
+  adminId    String?
+  metadata   Json
+}
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
