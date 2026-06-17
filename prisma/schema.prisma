@@ -29,8 +29,8 @@ model Product {
   sku        String   @unique
   slug       String   @unique
   name       String
-  description String
-  price      Decimal
+  description String  @db.Text
+  price      Decimal  @db.Decimal(10,2)
   status     ProductStatus @default(ACTIVE)
   internal   Boolean   @default(false)
   noindex    Boolean   @default(false)
@@ -51,7 +51,7 @@ model Category {
   id          String            @id @default(uuid())
   name        String
   slug        String   @unique
-  description String
+  description String   @db.Text
   products    ProductCategory[]
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
@@ -97,7 +97,7 @@ model Brand {
   id          String    @id @default(uuid())
   name        String
   slug        String    @unique
-  description String?
+  description String?   @db.Text
   products    Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -107,7 +107,7 @@ model OrderDraft {
   id        String      @id @default(uuid())
   status    OrderDraftStatus @default(INTENT_CREATED)
   items     OrderItem[]
-  notes     String?
+  notes     String?     @db.Text
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 }
@@ -120,7 +120,7 @@ model OrderItem {
   productId    String
   productName  String
   quantity     Int
-  priceSnapshot Decimal
+  priceSnapshot Decimal   @db.Decimal(10,2)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 

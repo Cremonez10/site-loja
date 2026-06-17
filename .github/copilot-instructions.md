@@ -9,7 +9,7 @@ JoFogo é uma loja de produtos sensuais/adultos. A V1 é um catálogo mobile-fir
 - Não implementar login de cliente.
 - Não implementar IA.
 - Não implementar telas completas do catálogo ainda.
-- Não implementar Prisma schema definitivo ainda.
+- O Prisma schema foi definido e migrado. Não alterar schema sem aprovação.
 - Não exibir, buscar ou renderizar produtos antes do aceite 18+.
 - Produto deve ter status `ACTIVE`, `OUT_OF_STOCK` ou `INACTIVE`.
 - Produto pode pertencer a múltiplas categorias.

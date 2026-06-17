@@ -105,10 +105,13 @@
 ## Observações de modelo
 - `Product.sku` e `Product.slug` são únicos.
 - `Product.price` deve usar tipo Decimal para evitar imprecisão em valores monetários.
+- `Product.price` usa `Decimal(10,2)` no banco.
 - `OrderItem.priceSnapshot` deve usar tipo Decimal.
+- Textos longos usam `@db.Text` em campos como `Product.description`, `Category.description`, `Brand.description` e `OrderDraft.notes`.
 - `OrderDraft` representa intenção de compra, não um pedido pago.
 - Não criar entidades `Customer`, `Payment` ou `Checkout` na V1.
 - Não criar um modelo `MiniOrder`; usar `OrderDraft` e `OrderItem`.
+- A categoria "Todos os Itens" não é persistida como registro, mas sim um filtro virtual da interface.
 
 ## Regras de negócio aplicadas ao modelo
 - Produtos com `status = ACTIVE` aparecem no catálogo e na busca.

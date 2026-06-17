@@ -28,6 +28,15 @@ A Fase 3.2 corrige:
 - `npm run test`
 - `npm audit`
 
+## Fase 4A - Banco de dados e seed de desenvolvimento
+- Inicie o PostgreSQL local no Codespaces ou em outro ambiente com suporte a Docker.
+- Configure `DATABASE_URL` no arquivo `.env` com a URL do banco local.
+- Valide o schema com `npx prisma validate`.
+- Gere a migration inicial com `npx prisma migrate dev --name init`.
+- Rode `npm run db:seed` para popular o banco com dados de desenvolvimento.
+- Não versionar o arquivo `.env`.
+- O seed é para desenvolvimento e testes, não representa o catálogo final.
+
 ## Estrutura inicial de pastas
 - `app/` - rotas públicas do catálogo e fluxos públicos
 - `app/admin/` - painel admin protegido
