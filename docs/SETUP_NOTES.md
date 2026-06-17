@@ -37,6 +37,18 @@ A Fase 3.2 corrige:
 - Não versionar o arquivo `.env`.
 - O seed é para desenvolvimento e testes, não representa o catálogo final.
 
+## Fase 4B - Autenticação admin e Age Gate
+
+- Admin de desenvolvimento criado via seed:
+	- email: admin@jofogo.dev
+	- senha dev: Dev@2026!
+- Regras e notas:
+	- `ADMIN_AUTH_SECRET` é obrigatório para assinar cookies de sessão admin.
+	- A sessão admin é armazenada em cookie HttpOnly chamado `admin_session` e assinado com HMAC-SHA256.
+	- A sessão tem duração de 8 horas.
+	- O age gate é persistido localmente por 30 dias via cookie e `localStorage` (apenas para liberar conteúdo institucional).
+	- Não usar as credenciais de desenvolvimento em produção.
+
 ## Estrutura inicial de pastas
 - `app/` - rotas públicas do catálogo e fluxos públicos
 - `app/admin/` - painel admin protegido

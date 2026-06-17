@@ -27,6 +27,19 @@
 7. Marca produtos internos como `internal` para noindex.
 8. Atualiza status para `ACTIVE`, `OUT_OF_STOCK` ou `INACTIVE`.
 
+## Fluxos adicionais - Fase 4B
+
+- Age Gate:
+	- Ao acessar `/`, exibir modal discreto solicitando confirmação 18+.
+	- Ao aceitar, gravar confirmação por 30 dias (cookie + localStorage) e liberar conteúdo institucional.
+	- Ao negar, não liberar conteúdo e exibir mensagem discreta.
+
+- Login / Logout Admin:
+	- `/admin` e `/api/admin/*` são protegidos por sessão assinada em cookie `admin_session`.
+	- `/admin/signin` e as rotas `/api/admin/auth/signin` e `/api/admin/auth/signout` são públicas.
+	- Após login bem-sucedido o admin é redirecionado para `/admin`.
+	- O logout limpa o cookie e retorna para `/admin/signin`.
+
 ## Regras de negócio no fluxo
 - Usuário não deve ver produtos antes do aceite 18+.
 - A busca deve responder apenas a produtos com status `ACTIVE` ou `OUT_OF_STOCK`.
