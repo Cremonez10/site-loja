@@ -15,7 +15,7 @@ test('age gate behaviour on home page', async ({ page }) => {
 
   // after accepting, catalog shell should appear
   await expect(page.locator('h2:has-text("Catálogo discreto")')).toBeVisible();
-  await expect(page.locator('text=Buscar por nome ou descrição')).toBeVisible();
+  await expect(page.getByPlaceholder('Buscar por nome ou descrição')).toBeVisible();
 
   // go back and deny (clear storage)
   await page.goto('/');
