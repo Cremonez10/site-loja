@@ -80,7 +80,6 @@ export default function CatalogClient() {
   const [pagination, setPagination] = useState<Pagination | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
   const [page, setPage] = useState(1);
 
@@ -257,7 +256,7 @@ export default function CatalogClient() {
 
         {/* Search */}
         <section className="mb-5" aria-label="Busca de produtos">
-          <ProductSearch onSearch={handleSearch} initialQuery={searchQuery} />
+          <ProductSearch onSearch={handleSearch} initialQuery="" />
         </section>
 
         {/* Category filter */}

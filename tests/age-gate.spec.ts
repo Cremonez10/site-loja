@@ -6,10 +6,16 @@ test('age gate behaviour on home page', async ({ page }) => {
   // gate should be visible initially
   await expect(page.locator('text=Este site é destinado a maiores de 18 anos.')).toBeVisible();
 
+  // catalog content must NOT be visible before confirmation
+  await expect(page.locator('text=Catálogo discreto')).toHaveCount(0);
+  await expect(page.locator('text=Buscar por nome ou descrição')).toHaveCount(0);
+
   // accept flow
   await page.click('button:has-text("Tenho 18 anos ou mais")');
-  await expect(page.locator('text=JoFogo')).toBeVisible();
-  await expect(page.locator('text=O catálogo será liberado em etapas futuras.')).toBeVisible();
+
+  // after accepting, catalog shell should appear
+  await expect(page.locator('h2:has-text("Catálogo discreto")')).toBeVisible();
+  await expect(page.locator('text=Buscar por nome ou descrição')).toBeVisible();
 
   // go back and deny (clear storage)
   await page.goto('/');
@@ -19,5 +25,8 @@ test('age gate behaviour on home page', async ({ page }) => {
   await expect(page.locator('text=Este site é destinado a maiores de 18 anos.')).toBeVisible();
   await page.click('button:has-text("Sair")');
   await expect(page.locator('text=Não podemos exibir este conteúdo sem a confirmação de idade.')).toBeVisible();
-  await expect(page.locator('text=JoFogo')).toHaveCount(0);
+
+  // catalog content must remain blocked after deny
+  await expect(page.locator('h2:has-text("Catálogo discreto")')).toHaveCount(0);
+  await expect(page.locator('text=Buscar por nome ou descrição')).toHaveCount(0);
 });
