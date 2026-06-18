@@ -33,6 +33,7 @@
 	- Ao acessar `/`, exibir modal discreto solicitando confirmação 18+.
 	- Ao aceitar, gravar confirmação por 30 dias (cookie + localStorage) e liberar conteúdo institucional.
 	- Ao negar, não liberar conteúdo e exibir mensagem discreta.
+	- Após confirmação, o catálogo público consumirá APIs públicas de `/api/categories`, `/api/products` e `/api/products/[slug]`.
 
 - Login / Logout Admin:
 	- `/admin` e `/api/admin/*` são protegidos por sessão assinada em cookie `admin_session`.

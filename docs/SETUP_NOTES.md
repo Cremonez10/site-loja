@@ -49,6 +49,16 @@ A Fase 3.2 corrige:
 	- O age gate é persistido localmente por 30 dias via cookie e `localStorage` (apenas para liberar conteúdo institucional).
 	- Não usar as credenciais de desenvolvimento em produção.
 
+## Fase 4C - APIs de catálogo, mini-pedido e analytics
+
+- Novas APIs públicas requerem o cookie `age_confirmed=1` ou `age_confirmed=true` para liberar dados de catálogo.
+- Rota `GET /api/categories` retorna categorias públicas se a confirmação de idade estiver presente.
+- Rota `GET /api/products` retorna produtos públicos filtrando `internal=false` e `status=ACTIVE|OUT_OF_STOCK`.
+- Rota `GET /api/products/[slug]` retorna detalhes de produto público ou `404` se indisponível.
+- Rota `POST /api/order-drafts` cria uma intenção de compra usando `OrderDraft` e `OrderItem` sem checkout, envio ou WhatsApp nesta fase.
+- Rota `POST /api/analytics/events` grava eventos sem PII em `AnalyticsEvent`.
+- Use `npm run db:seed`, `npm run lint`, `npm run build`, `npm run test`, `npm audit` para validação.
+
 ## Estrutura inicial de pastas
 - `app/` - rotas públicas do catálogo e fluxos públicos
 - `app/admin/` - painel admin protegido

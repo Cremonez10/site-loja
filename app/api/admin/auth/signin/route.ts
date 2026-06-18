@@ -12,7 +12,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid' }, { status: 400 });
     }
 
-    const user = await prisma.adminUser.findUnique({ where: { email } });
+    const user = await prisma.adminUser.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        passwordHash: true,
+        role: true,
+      },
+    });
 
     // sempre retornar genérico
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

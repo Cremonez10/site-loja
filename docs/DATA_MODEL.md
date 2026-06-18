@@ -120,3 +120,5 @@
 - Produtos internos são marcados `internal` e devem ser `noindex`.
 - O admin deve autenticar para criar, editar ou alterar status de produtos.
 - Eventos analíticos são gravados com `AnalyticsEvent.metadata` JSON para detalhes adicionais.
+- As APIs públicas filtram produtos com `internal = false` e `status IN (ACTIVE, OUT_OF_STOCK)`.
+- `OrderDraft` e `OrderItem` usam `priceSnapshot` e `productName` para preservar preço e nome do produto no momento da intenção.

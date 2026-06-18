@@ -78,6 +78,24 @@ Registrar eventos padronizados que capturem navegação, engajamento e fluxo de 
 - Não enviar dados pessoais do visitante.
 - Evitar armazenamento de IP ou identificadores persistentes além do necessário.
 - O evento `admin_login_success` deve ser usado apenas para auditoria do painel.
+- O endpoint `POST /api/analytics/events` rejeita metadados com chaves óbvias de PII como `email`, `phone`, `whatsapp`, `cpf`, `document`, `password` ou `address`.
+
+## Eventos recomendados para a Fase 4C
+- `age_gate_viewed`
+- `age_gate_accepted`
+- `age_gate_rejected`
+- `catalog_viewed`
+- `category_viewed`
+- `search_performed`
+- `product_viewed`
+- `product_added_to_order`
+- `order_intent_started`
+- `order_intent_sent`
+- `whatsapp_message_copied`
+- `admin_login_success`
+- `admin_product_created`
+- `admin_product_updated`
+- `admin_product_status_changed`
 
 ## Critérios de análise
 - Monitorar o fluxo do age gate e a aceitação/rejeição.
