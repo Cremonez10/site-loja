@@ -9,9 +9,37 @@ test.describe('analytics api', () => {
     expect(await response.json()).toEqual({ ok: true });
   });
 
+  test('POST /api/analytics/events with unknown event name returns 400', async ({ request }) => {
+    const response = await request.post('/api/analytics/events', {
+      data: { name: 'unknown_event', metadata: {} },
+    });
+    expect(response.status()).toBe(400);
+    expect(await response.json()).toEqual({ error: 'Evento inválido.' });
+  });
+
+  test('POST /api/analytics/events with nested PII metadata returns 400', async ({ request }) => {
+    const response = await request.post('/api/analytics/events', {
+      data: {
+        name: 'product_viewed',
+        metadata: { details: { email: 'test@example.com' } },
+      },
+    });
+    expect(response.status()).toBe(400);
+    expect(await response.json()).toEqual({ error: 'PII metadata is not allowed' });
+  });
+
+  test('POST /api/analytics/events with large metadata returns 400', async ({ request }) => {
+    const metadata = { details: 'a'.repeat(10001) };
+    const response = await request.post('/api/analytics/events', {
+      data: { name: 'product_viewed', metadata },
+    });
+    expect(response.status()).toBe(400);
+    expect(await response.json()).toEqual({ error: 'Metadata is too large' });
+  });
+
   test('POST /api/analytics/events with PII metadata key returns 400', async ({ request }) => {
     const response = await request.post('/api/analytics/events', {
-      data: { name: 'age_gate_confirmed', metadata: { email: 'test@example.com' } },
+      data: { name: 'age_gate_accepted', metadata: { email: 'test@example.com' } },
     });
     expect(response.status()).toBe(400);
     expect(await response.json()).toEqual({ error: 'PII metadata is not allowed' });
@@ -22,6 +50,6 @@ test.describe('analytics api', () => {
       data: { name: '', metadata: {} },
     });
     expect(response.status()).toBe(400);
-    expect(await response.json()).toEqual({ error: 'Invalid event name' });
+    expect(await response.json()).toEqual({ error: 'Evento inválido.' });
   });
 });

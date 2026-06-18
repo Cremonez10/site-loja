@@ -66,7 +66,13 @@ export async function POST(req: Request) {
     preparedItems.push({ productId, quantity });
   }
 
-  const productIds = [...new Set(preparedItems.map((item) => item.productId))];
+  const productIds = preparedItems.map((item) => item.productId);
+  const uniqueProductIds = new Set(productIds);
+
+  if (uniqueProductIds.size !== productIds.length) {
+    return NextResponse.json({ error: 'Itens duplicados no pedido.' }, { status: 400 });
+  }
+
   const products = await prisma.product.findMany({
     where: {
       id: { in: productIds },
@@ -111,8 +117,18 @@ export async function POST(req: Request) {
     },
   });
 
+  function decimalStringToCents(value: string) {
+    const [integerPart, decimalPart = ''] = value.split('.');
+    const normalizedInteger = integerPart.replace(/^0+/, '') || '0';
+    const paddedDecimal = (decimalPart + '000').slice(0, 3);
+    const mainCents = BigInt(normalizedInteger) * 100n + BigInt(paddedDecimal.slice(0, 2));
+    const roundDigit = Number(paddedDecimal[2]);
+    return Number(roundDigit >= 5 ? mainCents + 1n : mainCents);
+  }
+
   const totalCents = orderDraft.items.reduce((sum, item) => {
-    return sum + Number(item.priceSnapshot.toString()) * item.quantity * 100;
+    const cents = decimalStringToCents(item.priceSnapshot.toString());
+    return sum + cents * item.quantity;
   }, 0);
 
   return NextResponse.json({

@@ -61,6 +61,14 @@ test.describe('catalog api', () => {
     expect(product).toEqual(expect.objectContaining({ id: expect.any(String), slug: 'produto-dev-001', name: expect.any(String), status: 'ACTIVE' }));
   });
 
+  test('GET /api/products/[slug] with internal slug returns 404', async ({ request }) => {
+    const response = await request.get('/api/products/produto-dev-012', {
+      headers: { cookie: 'age_confirmed=1' },
+    });
+    expect(response.status()).toBe(404);
+    expect(await response.json()).toEqual({ error: 'Product not found' });
+  });
+
   test('GET /api/products/[slug] with nonexistent slug returns 404', async ({ request }) => {
     const response = await request.get('/api/products/unknown-slug', {
       headers: { cookie: 'age_confirmed=1' },

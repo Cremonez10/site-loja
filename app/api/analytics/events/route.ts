@@ -2,6 +2,26 @@ import { NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
 import type { Prisma } from '@prisma/client';
 
+const ALLOWED_EVENT_NAMES = new Set([
+  'age_gate_viewed',
+  'age_gate_accepted',
+  'age_gate_rejected',
+  'catalog_viewed',
+  'category_viewed',
+  'search_performed',
+  'product_viewed',
+  'product_added_to_order',
+  'product_removed_from_order',
+  'order_quantity_changed',
+  'order_intent_started',
+  'order_intent_sent',
+  'whatsapp_message_copied',
+  'admin_login_success',
+  'admin_product_created',
+  'admin_product_updated',
+  'admin_product_status_changed',
+]);
+
 const BLOCKED_KEYS = new Set([
   'email',
   'phone',
@@ -16,12 +36,25 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function hasBlockedMetadataKeys(metadata: Record<string, unknown>) {
-  for (const key of Object.keys(metadata)) {
+function hasBlockedMetadataKeys(value: unknown): boolean {
+  if (Array.isArray(value)) {
+    return value.some(hasBlockedMetadataKeys);
+  }
+
+  if (!isPlainObject(value)) {
+    return false;
+  }
+
+  for (const [key, nested] of Object.entries(value)) {
     if (BLOCKED_KEYS.has(key.toLowerCase())) {
       return true;
     }
+
+    if (hasBlockedMetadataKeys(nested)) {
+      return true;
+    }
   }
+
   return false;
 }
 
@@ -38,10 +71,15 @@ export async function POST(req: Request) {
   }
 
   const name = typeof body.name === 'string' ? body.name.trim() : '';
-  const metadata = isPlainObject(body.metadata) ? body.metadata : {} as Record<string, Prisma.InputJsonValue>;
+  const metadataValue = body.metadata;
+  const metadata = typeof metadataValue === 'undefined' ? {} : isPlainObject(metadataValue) ? metadataValue : null;
 
-  if (!name || name.length === 0 || name.length > 80) {
-    return NextResponse.json({ error: 'Invalid event name' }, { status: 400 });
+  if (!name || name.length > 80 || !ALLOWED_EVENT_NAMES.has(name)) {
+    return NextResponse.json({ error: 'Evento inválido.' }, { status: 400 });
+  }
+
+  if (metadata === null) {
+    return NextResponse.json({ error: 'Metadata deve ser um objeto.' }, { status: 400 });
   }
 
   if (hasBlockedMetadataKeys(metadata)) {

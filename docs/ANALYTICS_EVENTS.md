@@ -78,7 +78,9 @@ Registrar eventos padronizados que capturem navegação, engajamento e fluxo de 
 - Não enviar dados pessoais do visitante.
 - Evitar armazenamento de IP ou identificadores persistentes além do necessário.
 - O evento `admin_login_success` deve ser usado apenas para auditoria do painel.
-- O endpoint `POST /api/analytics/events` rejeita metadados com chaves óbvias de PII como `email`, `phone`, `whatsapp`, `cpf`, `document`, `password` ou `address`.
+- O endpoint `POST /api/analytics/events` aceita apenas nomes de evento documentados e rejeita metadados que contenham PII em qualquer nível de profundidade.
+- O endpoint bloqueia chaves de PII como `email`, `phone`, `whatsapp`, `cpf`, `document`, `password` ou `address` em qualquer objeto aninhado.
+- Rate limiting para eventos é uma preocupação futura de infraestrutura e deve ser tratado no backlog sem ser implementado nesta fase.
 
 ## Eventos recomendados para a Fase 4C
 - `age_gate_viewed`

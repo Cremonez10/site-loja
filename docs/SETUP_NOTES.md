@@ -59,6 +59,13 @@ A Fase 3.2 corrige:
 - Rota `POST /api/analytics/events` grava eventos sem PII em `AnalyticsEvent`.
 - Use `npm run db:seed`, `npm run lint`, `npm run build`, `npm run test`, `npm audit` para validação.
 
+## Fase 4C.1 - Proteção de API
+
+- `POST /api/order-drafts` agora rejeita itens duplicados no payload.
+- `POST /api/order-drafts` calcula `totalCents` usando arredondamento seguro para evitar erros de ponto flutuante.
+- `POST /api/analytics/events` aceita apenas nomes de evento documentados e rejeita eventos desconhecidos.
+- `POST /api/analytics/events` valida metadados recursivamente e bloqueia PII em qualquer nível de aninhamento.
+
 ## Estrutura inicial de pastas
 - `app/` - rotas públicas do catálogo e fluxos públicos
 - `app/admin/` - painel admin protegido
