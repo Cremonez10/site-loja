@@ -41,6 +41,41 @@
 	- Após login bem-sucedido o admin é redirecionado para `/admin`.
 	- O logout limpa o cookie e retorna para `/admin/signin`.
 
+## Fase 5A.1 - Catálogo público (browsing shell)
+
+### Fluxo de navegação do catálogo
+1. Usuário confirma 18+ no Age Gate.
+2. Após confirmação, `<CatalogClient />` é renderizado.
+3. O componente busca `/api/categories` e `/api/products` no lado do cliente (browser fetch com cookies).
+4. Nenhuma requisição de catálogo é feita antes da confirmação de idade.
+5. Categorias são exibidas como filtro horizontal com "Todos os itens" como opção padrão.
+6. Busca por nome ou descrição é disponibilizada com input controlado (máximo 80 caracteres).
+7. Produtos são exibidos em grid responsivo (1 coluna mobile, 2+ desktop).
+8. Produtos indisponíveis exibem badge "Indisponível no momento" e CTA desabilitado.
+9. Paginação via botão "Carregar mais" (12 itens por página).
+10. CTA "Ver detalhes" direciona para `/products/[slug]` (rota será implementada na Fase 5A.2).
+
+### Componentes criados
+- `CatalogClient.tsx` — orquestrador client-side do catálogo
+- `CategoryFilter.tsx` — filtro por categoria com scroll horizontal mobile
+- `ProductSearch.tsx` — input de busca controlado
+- `ProductGrid.tsx` — grid responsivo de cards
+- `ProductCard.tsx` — card de produto com imagem, preço, marca e CTA
+- `CatalogStates.tsx` — estados de loading, erro e vazio
+
+### Analytics (Fase 5A.1)
+- `catalog_viewed` — após carregamento de produtos
+- `category_viewed` — ao trocar categoria
+- `search_performed` — ao buscar (sem enviar texto da busca, apenas `hasQuery` e `queryLength`)
+
+### Fora do escopo da Fase 5A.1
+- Página de detalhe do produto (`/products/[slug]`)
+- Mini-pedido / intenção de compra
+- Integração WhatsApp
+- Checkout, pagamento, frete
+- Marketplace
+- Login de cliente
+
 ## Regras de negócio no fluxo
 - Usuário não deve ver produtos antes do aceite 18+.
 - A busca deve responder apenas a produtos com status `ACTIVE` ou `OUT_OF_STOCK`.

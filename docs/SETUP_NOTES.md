@@ -83,3 +83,33 @@ A Fase 3.2 corrige:
 - `lib/prisma.ts` - singleton Prisma compatível com Next.js
 - `prisma` - schema do banco
 - `docs` - documentação
+
+## Fase 5A.1 - Catálogo público (browsing shell)
+
+- Componentes criados em `components/catalog/`:
+	- `CatalogClient.tsx` — orquestrador do catálogo (client component)
+	- `CategoryFilter.tsx` — filtro por categorias
+	- `ProductSearch.tsx` — busca por nome ou descrição
+	- `ProductGrid.tsx` — grid responsivo de cards
+	- `ProductCard.tsx` — card de produto atualizado
+	- `CatalogStates.tsx` — estados de loading, erro e vazio
+- `app/page.tsx` atualizado para renderizar `<CatalogClient />` dentro do `<AgeGate>`.
+- Nenhuma dependência foi adicionada.
+- Nenhuma API, schema Prisma ou migration foi alterada.
+
+### Validação (Fase 5A.1)
+
+> **Importante:** O ambiente local Windows não possui Node.js, npm ou Docker.
+> Validação local não é possível nesta máquina.
+> Toda validação deve ser executada em **GitHub Codespaces** ou outro ambiente com suporte a Node.js.
+
+Comandos de validação:
+```bash
+npm install
+npx prisma generate
+npm run db:seed
+npm run lint
+npm run build
+npm run test
+npm audit
+```
