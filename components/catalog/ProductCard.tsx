@@ -45,7 +45,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const productCategories = product.categories ?? [];
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-900/80 shadow-lg shadow-slate-950/40 transition-all duration-300 hover:border-slate-700 hover:shadow-xl hover:shadow-slate-950/50">
+    <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-900/80 shadow-lg shadow-slate-950/40 transition-all duration-200 hover:border-slate-700 hover:shadow-xl hover:shadow-slate-950/60 hover:-translate-y-0.5">
       {/* Image area */}
       <div className="relative aspect-square overflow-hidden bg-slate-800/40">
         {primaryImage ? (
@@ -56,7 +56,7 @@ export default function ProductCard({ product }: { product: Product }) {
             loading="lazy"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-850 text-slate-600">
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 text-slate-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -85,7 +85,7 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* Content area */}
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-5">
         {/* Categories */}
         {productCategories.length > 0 && (
           <div className="mb-1.5 flex flex-wrap gap-1">

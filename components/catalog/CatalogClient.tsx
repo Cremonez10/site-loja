@@ -243,7 +243,7 @@ export default function CatalogClient() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-screen-xl px-4 py-6">
+      <div className="mx-auto max-w-screen-xl px-4 py-8">
         {/* Catalog intro */}
         <section className="mb-6">
           <h2 className="text-lg font-semibold text-slate-200">
@@ -270,7 +270,8 @@ export default function CatalogClient() {
           </section>
         )}
 
-        {/* Content area */}
+        {/* Divider between controls and results */}
+        <div className="mb-6 border-t border-slate-800/50" />
         {loading && <CatalogLoading />}
 
         {!loading && error && <CatalogError onRetry={handleRetry} />}
@@ -314,7 +315,7 @@ export default function CatalogClient() {
       </div>
 
       {/* Footer */}
-      <footer className="mt-12 border-t border-slate-800/40 py-6 text-center text-xs text-slate-600">
+      <footer className="mt-16 border-t border-slate-800/40 py-8 text-center text-xs text-slate-600">
         <p>JoFogo — Catálogo discreto</p>
       </footer>
     </main>

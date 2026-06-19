@@ -303,9 +303,9 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-screen-xl px-4 py-6" id="pdp-main">
+      <main className="mx-auto max-w-screen-xl px-4 py-8" id="pdp-main">
         {/* Breadcrumb / back */}
-        <div className="mb-5">
+        <div className="mb-6">
           <BackLink />
         </div>
 
@@ -315,7 +315,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
         >
           <div className="md:flex">
             {/* Image */}
-            <div className="relative aspect-square w-full overflow-hidden md:aspect-auto md:h-auto md:w-2/5">
+            <div className="relative aspect-square w-full overflow-hidden md:aspect-auto md:min-h-[360px] md:w-2/5">
               {primaryImage ? (
                 <img
                   src={primaryImage.url}
@@ -441,7 +441,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
       </main>
 
       {/* Footer */}
-      <footer className="mt-12 border-t border-slate-800/40 py-6 text-center text-xs text-slate-600">
+      <footer className="mt-16 border-t border-slate-800/40 py-8 text-center text-xs text-slate-600">
         <p>JoFogo — Catálogo discreto</p>
       </footer>
     </div>
