@@ -149,7 +149,7 @@ export default function CatalogClient() {
         }
         setPagination(data.pagination);
 
-        // Analytics: product_list_viewed after products load successfully
+        // Analytics: catalog_viewed after products load successfully
         trackEvent("catalog_viewed", {
           category: opts.category ?? "all",
           resultsCount: data.pagination.total,
@@ -177,7 +177,7 @@ export default function CatalogClient() {
       append: false,
     });
 
-    // Analytics: category_selected when category changes (not on initial mount)
+    // Analytics: category_viewed when category changes (not on initial mount)
     if (initialLoadDone.current && prevCategory.current !== selectedCategory) {
       trackEvent("category_viewed", {
         categorySlug: selectedCategory ?? "all",
@@ -194,7 +194,7 @@ export default function CatalogClient() {
   const handleSearch = (query: string) => {
     setAppliedSearchQuery(query);
 
-    // Analytics: product_search_used (no raw search text)
+    // Analytics: search_performed (no raw search text)
     if (query.length > 0) {
       trackEvent("search_performed", {
         hasQuery: true,
