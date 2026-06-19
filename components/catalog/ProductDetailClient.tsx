@@ -66,11 +66,11 @@ function formatBRL(value: number): string {
 
 // ── Sub-components ─────────────────────────────────────
 
-function BackLink() {
+function BackLink({ id = "pdp-back-link" }: { id?: string }) {
   return (
     <Link
       href="/"
-      id="pdp-back-link"
+      id={id}
       className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-sm text-slate-300 transition-all duration-200 hover:border-slate-600 hover:bg-slate-800 hover:text-slate-100"
     >
       <svg
@@ -144,7 +144,7 @@ function InfoState({ heading, message, onRetry }: InfoStateProps) {
                 JoFogo
               </span>
             </span>
-            <BackLink />
+            <BackLink id="pdp-header-back-link" />
           </div>
         </div>
       </header>
