@@ -81,7 +81,16 @@ test.describe('product detail page', () => {
     const normalised = bodyText.toLowerCase();
 
     // None of these words should appear
-    const prohibited = ['comprar', 'carrinho', 'checkout', 'pagamento', 'frete', 'whatsapp'];
+    const prohibited = [
+      'comprar',
+      'carrinho',
+      'checkout',
+      'pagamento',
+      'frete',
+      'whatsapp',
+      'finalizar pedido',
+      'pedido final',
+    ];
     for (const term of prohibited) {
       expect(normalised, `Page must not contain prohibited term: "${term}"`).not.toContain(term);
     }
@@ -97,5 +106,78 @@ test.describe('product detail page', () => {
 
     // Out-of-stock indicator must be present
     await expect(page.locator('text=Indisponível no momento').first()).toBeVisible();
+  });
+
+  // ── Phase 5B: interest flow ─────────────────────────────────
+
+  test('ACTIVE product shows "Tenho interesse" button', async ({ page }) => {
+    await confirmAge(page);
+    await page.goto('/products/produto-dev-001');
+
+    // Wait for product to load
+    await expect(page.locator('#pdp-product-name')).toBeVisible();
+
+    // Interest button must be visible for ACTIVE products
+    await expect(page.locator('#pdp-interest-btn')).toBeVisible();
+    await expect(page.locator('#pdp-interest-btn')).toContainText('Tenho interesse');
+  });
+
+  test('OUT_OF_STOCK product does not show interest button', async ({ page }) => {
+    await confirmAge(page);
+    await page.goto('/products/produto-dev-002');
+
+    // Wait for product to load
+    await expect(page.locator('#pdp-product-name')).toBeVisible();
+
+    // Interest button must NOT be present for OUT_OF_STOCK products
+    await expect(page.locator('#pdp-interest-btn')).toHaveCount(0);
+  });
+
+  test('ACTIVE product interest submission shows success state', async ({ page }) => {
+    await confirmAge(page);
+
+    // Intercept the order-drafts API call to return a successful response without DB writes
+    await page.route('/api/order-drafts', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          id: 'draft-mock-001',
+          status: 'DRAFT',
+          items: [{ id: 'item-mock-001', productId: 'prod-mock-001', productName: 'Mock Product', quantity: 1, priceSnapshot: '199.90' }],
+          totalCents: 19990,
+        }),
+      });
+    });
+
+    await page.goto('/products/produto-dev-001');
+    await expect(page.locator('#pdp-product-name')).toBeVisible();
+
+    // Click the interest button
+    await page.locator('#pdp-interest-btn').click();
+
+    // Success state must appear, button must be gone
+    await expect(page.locator('#pdp-interest-success')).toBeVisible();
+    await expect(page.locator('#pdp-interest-success')).toContainText('Interesse registrado com discrição');
+    await expect(page.locator('#pdp-interest-btn')).toHaveCount(0);
+  });
+
+  test('ACTIVE product interest submission shows error state on API failure', async ({ page }) => {
+    await confirmAge(page);
+
+    // Force the order-drafts call to fail
+    await page.route('/api/order-drafts', async (route) => {
+      await route.fulfill({ status: 500, body: 'Internal Server Error' });
+    });
+
+    await page.goto('/products/produto-dev-001');
+    await expect(page.locator('#pdp-product-name')).toBeVisible();
+
+    // Click the interest button
+    await page.locator('#pdp-interest-btn').click();
+
+    // Error message must appear, button must still be present for retry
+    await expect(page.locator('#pdp-interest-error')).toBeVisible();
+    await expect(page.locator('#pdp-interest-btn')).toBeVisible();
   });
 });

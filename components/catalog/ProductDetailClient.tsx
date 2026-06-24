@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // ── Types ──────────────────────────────────────────────
 
@@ -182,6 +182,102 @@ function InfoState({ heading, message, onRetry }: InfoStateProps) {
           <BackLink />
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── Interest action sub-component ─────────────────────
+
+type InterestState = "idle" | "loading" | "success" | "error";
+
+type InterestActionProps = {
+  productId: string;
+  isOutOfStock: boolean;
+};
+
+function InterestAction({ productId, isOutOfStock }: InterestActionProps) {
+  const [state, setState] = useState<InterestState>("idle");
+
+  const handleInterest = useCallback(async () => {
+    if (state === "loading" || state === "success") return;
+    setState("loading");
+    try {
+      const res = await fetch("/api/order-drafts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: [{ productId, quantity: 1 }],
+        }),
+      });
+      if (!res.ok) {
+        setState("error");
+        return;
+      }
+      setState("success");
+    } catch {
+      setState("error");
+    }
+  }, [productId, state]);
+
+  if (isOutOfStock) return null;
+
+  if (state === "success") {
+    return (
+      <div
+        id="pdp-interest-success"
+        role="status"
+        className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-800/50 bg-emerald-950/40 px-4 py-3 text-sm text-emerald-400"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          className="h-4 w-4 shrink-0"
+          aria-hidden="true"
+        >
+          <path
+            fillRule="evenodd"
+            d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Interesse registrado com discrição.
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 space-y-2">
+      <button
+        id="pdp-interest-btn"
+        type="button"
+        disabled={state === "loading"}
+        onClick={handleInterest}
+        aria-busy={state === "loading"}
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-600/60 bg-amber-500/10 py-3 text-sm font-semibold text-amber-400 transition-all duration-200 hover:border-amber-500 hover:bg-amber-500/20 hover:text-amber-300 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {state === "loading" ? (
+          <>
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-amber-600 border-t-amber-300"
+              aria-hidden="true"
+            />
+            Registrando...
+          </>
+        ) : (
+          "Tenho interesse"
+        )}
+      </button>
+
+      {state === "error" && (
+        <p
+          id="pdp-interest-error"
+          role="alert"
+          className="text-center text-xs text-rose-400"
+        >
+          Não foi possível registrar o interesse. Tente novamente.
+        </p>
+      )}
     </div>
   );
 }
@@ -389,6 +485,12 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
                   Indisponível no momento
                 </p>
               )}
+
+              {/* Interest action */}
+              <InterestAction
+                productId={product.id}
+                isOutOfStock={isOutOfStock}
+              />
 
               {/* Description */}
               {product.description && (
