@@ -136,7 +136,7 @@ type InfoStateProps = {
 function InfoState({ heading, message, onRetry }: InfoStateProps) {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="sticky top-0 z-20 border-b border-slate-800/60 bg-slate-950/90 backdrop-blur-md">
+      <header className="border-b border-slate-800/60 bg-slate-950">
         <div className="mx-auto max-w-screen-xl px-4 py-4">
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold tracking-tight">
@@ -290,7 +290,7 @@ export default function ProductDetailClient({ slug }: { slug: string }) {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-slate-800/60 bg-slate-950/90 backdrop-blur-md">
+      <header className="border-b border-slate-800/60 bg-slate-950">
         <div className="mx-auto max-w-screen-xl px-4 py-4">
           <div className="flex items-center justify-between">
             <span className="text-2xl font-bold tracking-tight">
