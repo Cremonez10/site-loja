@@ -150,7 +150,7 @@ export default function AdminInterestsPage() {
     <main className="min-h-screen bg-slate-950 text-slate-100 p-4">
       <section className="mx-auto max-w-screen-lg space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <div className="mb-1">
               <Link
@@ -171,7 +171,9 @@ export default function AdminInterestsPage() {
               Manifestações de interesse recebidas pelo catálogo.
             </p>
           </div>
-          <AdminLogoutButton />
+          <div className="shrink-0">
+            <AdminLogoutButton />
+          </div>
         </div>
 
         {/* Body */}
@@ -189,80 +191,174 @@ export default function AdminInterestsPage() {
         {status === "ok" && drafts.length === 0 && <EmptyState />}
 
         {status === "ok" && drafts.length > 0 && (
-          <div
-            id="admin-interests-table"
-            className="overflow-hidden rounded-xl border border-slate-800"
-          >
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-800 bg-slate-900/60">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Ref.
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Data
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Situação
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Produto
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Qtd.
-                  </th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Valor snapshot
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {drafts.map((draft) =>
-                  draft.items.map((item, idx) => (
-                    <tr
-                      key={item.id}
-                      className="bg-slate-900/20 transition-colors hover:bg-slate-900/60"
-                    >
-                      {/* Show draft ref only on first item row */}
-                      {idx === 0 ? (
-                        <td
-                          className="px-4 py-3 font-mono text-xs text-slate-500"
-                          rowSpan={draft.items.length}
+          <>
+            {/* Summary bar — computed from already-fetched data only */}
+            <div
+              id="admin-interests-summary"
+              className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/40 px-4 py-3 text-xs text-slate-400"
+            >
+              <span>
+                <span className="font-semibold text-slate-200">
+                  {drafts.length}
+                </span>{" "}
+                {drafts.length === 1
+                  ? "interesse registrado"
+                  : "interesses registrados"}
+              </span>
+              {(() => {
+                const totalItems = drafts.reduce(
+                  (acc, d) => acc + d.items.length,
+                  0,
+                );
+                return totalItems !== drafts.length ? (
+                  <>
+                    <span className="text-slate-600">·</span>
+                    <span>
+                      <span className="font-semibold text-slate-200">
+                        {totalItems}
+                      </span>{" "}
+                      {totalItems === 1 ? "item" : "itens"} no total
+                    </span>
+                  </>
+                ) : null;
+              })()}
+            </div>
+
+            {/*
+             * Unified container: both the mobile card list and the desktop
+             * table live inside #admin-interests-table so the existing test
+             * selector keeps working regardless of viewport.
+             */}
+            <div id="admin-interests-table">
+              {/* ── Mobile card list (hidden at >= sm) ── */}
+              <ul
+                className="space-y-4 sm:hidden"
+                aria-label="Lista de interesses"
+              >
+                {drafts.map((draft) => (
+                  <li
+                    key={draft.id}
+                    className="rounded-xl border border-slate-800 bg-slate-900/30 p-4"
+                  >
+                    {/* Draft header */}
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-xs text-slate-500">
+                        #{shortId(draft.id)}
+                      </span>
+                      <StatusBadge status={draft.status} />
+                      <span className="ml-auto text-xs text-slate-500">
+                        {formatDateTime(draft.createdAt)}
+                      </span>
+                    </div>
+
+                    {/* Item rows */}
+                    <ul className="space-y-2">
+                      {draft.items.map((item) => (
+                        <li
+                          key={item.id}
+                          className="flex items-start justify-between gap-2 rounded-lg border border-slate-800/60 bg-slate-900/20 px-3 py-2"
                         >
-                          #{shortId(draft.id)}
-                        </td>
-                      ) : null}
-                      {idx === 0 ? (
-                        <td
-                          className="px-4 py-3 text-xs text-slate-400"
-                          rowSpan={draft.items.length}
-                        >
-                          {formatDateTime(draft.createdAt)}
-                        </td>
-                      ) : null}
-                      {idx === 0 ? (
-                        <td
-                          className="px-4 py-3"
-                          rowSpan={draft.items.length}
-                        >
-                          <StatusBadge status={draft.status} />
-                        </td>
-                      ) : null}
-                      <td className="px-4 py-3 text-slate-200">
-                        {item.productName}
-                      </td>
-                      <td className="px-4 py-3 text-right text-slate-400">
-                        {item.quantity}
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium text-amber-400">
-                        {formatBRL(item.priceSnapshot)}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm text-slate-200">
+                              {item.productName}
+                            </p>
+                            <p className="mt-0.5 text-xs text-slate-500">
+                              Qtd.{" "}
+                              <span className="font-medium text-slate-400">
+                                {item.quantity}
+                              </span>
+                            </p>
+                          </div>
+                          <span className="shrink-0 text-sm font-medium text-amber-400">
+                            {formatBRL(item.priceSnapshot)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+
+              {/* ── Desktop table (hidden below sm, horizontal scroll) ── */}
+              <div className="hidden overflow-hidden rounded-xl border border-slate-800 sm:block">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[640px] text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-800 bg-slate-900/60">
+                        <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          Ref.
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          Data
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          Situação
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          Produto
+                        </th>
+                        <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          Qtd.
+                        </th>
+                        <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                          Valor snapshot
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800/60">
+                      {drafts.map((draft) =>
+                        draft.items.map((item, idx) => (
+                          <tr
+                            key={item.id}
+                            className={`transition-colors hover:bg-slate-900/60 ${
+                              idx === 0 ? "bg-slate-900/20" : "bg-slate-900/10"
+                            }`}
+                          >
+                            {/*
+                             * Ref, Date and Status are repeated on every row
+                             * but hidden via `invisible` on non-first rows.
+                             * This avoids rowSpan rendering bugs on tables
+                             * inside overflow-x-auto containers.
+                             */}
+                            <td
+                              className={`px-4 py-3 font-mono text-xs text-slate-500 ${
+                                idx === 0 ? "" : "invisible select-none"
+                              }`}
+                            >
+                              #{shortId(draft.id)}
+                            </td>
+                            <td
+                              className={`px-4 py-3 text-xs text-slate-400 ${
+                                idx === 0 ? "" : "invisible select-none"
+                              }`}
+                            >
+                              {formatDateTime(draft.createdAt)}
+                            </td>
+                            <td
+                              className={`px-4 py-3 ${
+                                idx === 0 ? "" : "invisible select-none"
+                              }`}
+                            >
+                              <StatusBadge status={draft.status} />
+                            </td>
+                            <td className="px-4 py-3 text-slate-200">
+                              {item.productName}
+                            </td>
+                            <td className="px-4 py-3 text-right text-slate-400">
+                              {item.quantity}
+                            </td>
+                            <td className="px-4 py-3 text-right font-medium text-amber-400">
+                              {formatBRL(item.priceSnapshot)}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </section>
     </main>

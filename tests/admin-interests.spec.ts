@@ -129,3 +129,89 @@ test.describe('admin interests', () => {
     }
   });
 });
+
+// ── Mobile viewport tests ──────────────────────────────────────────────────
+
+/**
+ * These tests re-run selected admin interests scenarios at a mobile viewport
+ * (390×844, equivalent to iPhone 14) to verify the responsive layout does not
+ * break on narrow screens.
+ */
+test.describe('admin interests – mobile viewport (390×844)', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('unauthenticated user is redirected from /admin/interests on mobile', async ({ page }) => {
+    await page.goto('/admin/interests');
+    expect(page.url()).toContain('/admin/signin');
+  });
+
+  test('heading is visible on mobile after authentication', async ({ page }) => {
+    await adminSignIn(page);
+    await page.goto('/admin/interests');
+
+    await expect(page.locator('#admin-interests-heading')).toBeVisible();
+    await expect(page.locator('#admin-interests-heading')).toContainText('Interesses registrados');
+  });
+
+  test('either table container or empty state renders on mobile', async ({ page }) => {
+    await adminSignIn(page);
+    await page.goto('/admin/interests');
+
+    // Wait for async data fetch to complete
+    await expect(page.locator('#admin-interests-heading')).toBeVisible();
+
+    // Loading spinner should eventually disappear
+    await page.waitForSelector('#admin-interests-loading', { state: 'hidden', timeout: 15_000 }).catch(() => {
+      // If #admin-interests-loading was never rendered (already done), that's fine
+    });
+
+    const hasTable = await page.locator('#admin-interests-table').count();
+    const hasEmpty = await page.locator('#admin-interests-empty').count();
+    expect(
+      hasTable + hasEmpty,
+      'Either #admin-interests-table or #admin-interests-empty must render on mobile',
+    ).toBeGreaterThan(0);
+  });
+
+  test('admin interests page has no horizontal overflow on mobile', async ({ page }) => {
+    await adminSignIn(page);
+    await page.goto('/admin/interests');
+
+    await expect(page.locator('#admin-interests-heading')).toBeVisible();
+
+    // The document body must not exceed the viewport width (no horizontal overflow)
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+    expect(
+      scrollWidth,
+      `Page should not overflow horizontally (scrollWidth ${scrollWidth} > clientWidth ${clientWidth})`,
+    ).toBeLessThanOrEqual(clientWidth);
+  });
+
+  test('admin interests page does not contain forbidden terms on mobile', async ({ page }) => {
+    await adminSignIn(page);
+    await page.goto('/admin/interests');
+
+    await expect(page.locator('#admin-interests-heading')).toBeVisible();
+
+    const bodyText = await page.locator('body').innerText();
+    const normalised = bodyText.toLowerCase();
+
+    const prohibited = [
+      'comprar',
+      'carrinho',
+      'checkout',
+      'pagamento',
+      'frete',
+      'whatsapp',
+      'finalizar pedido',
+      'pedido final',
+    ];
+    for (const term of prohibited) {
+      expect(
+        normalised,
+        `Admin interests page must not contain forbidden term on mobile: "${term}"`,
+      ).not.toContain(term);
+    }
+  });
+});
