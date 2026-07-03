@@ -10,6 +10,7 @@
     "format": "prettier --write .",
     "prisma": "prisma",
     "db:migrate": "prisma migrate dev",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:seed": "npx tsx prisma/seed.ts",
     "test": "playwright test",
