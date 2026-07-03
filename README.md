@@ -42,6 +42,13 @@ npm run dev
 - `npm run test` - executar testes Playwright
 - `npm run test:report` - abrir relatório do Playwright
 
+## Documentação
+
+- [`docs/PRODUCTION_READINESS.md`](docs/PRODUCTION_READINESS.md) — Checklist de prontidão para produção (Phase 6A)
+- [`docs/pre-release-audit.md`](docs/pre-release-audit.md) — Auditoria pré-release MVP (Phase 5D)
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Arquitetura do projeto
+- [`docs/COMPLIANCE_NOTES.md`](docs/COMPLIANCE_NOTES.md) — Notas de compliance / LGPD
+
 ## Estrutura inicial
 - `app/(public)` - rotas públicas do catálogo e fluxo cliente
 - `app/(admin)` - painel admin protegido
